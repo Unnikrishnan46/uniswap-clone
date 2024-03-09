@@ -6,8 +6,13 @@ import '@uniswap/v3-periphery/contracts/libraries/TransferHelper.sol';
 import '@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol';
 
 contract SwapExamples {
-    ISwapRouter public constant swapRouter = ISwapRouter(0xE592427A0AEce92De3Edee1F18E0157C05861564);
+    // ISwapRouter public constant swapRouter = ISwapRouter(0xE592427A0AEce92De3Edee1F18E0157C05861564);
+    ISwapRouter public immutable swapRouter;
     uint24 public constant poolFee = 3000;
+
+    constructor(ISwapRouter _swapRouter) {
+        swapRouter = _swapRouter;
+    }
 
     function swapExactInputSingle(uint256 amountIn,address _tokenIn,address _tokenOut) external returns (uint256 amountOut) {
         TransferHelper.safeTransferFrom(_tokenIn, msg.sender, address(this), amountIn);
