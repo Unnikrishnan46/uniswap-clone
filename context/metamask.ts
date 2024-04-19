@@ -42,8 +42,6 @@ async function connectMetamask() {
       const balanceInEther = await ethers.formatEther(balance);
       const network = await provider._network;
       const chainId = await provider.send("eth_chainId", []);
-      console.log(network.name, balance, balanceInEther, chainId);
-
       return {
         address: address,
         loggedIn: true,

@@ -1,28 +1,45 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
-// const DAI = "0x6B175474E89094C44Da98b954EedeAC495271d0F";
-const WETH9 = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2";  // MAINNET
-// const WETH9 = "0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14"; // Sepolia
-const USDC = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";  // MAINNET
-// const USDC = "0x6f14C02Fc1F78322cFd7d707aB90f18baD3B54f5" // Sepolia
+const DAI = "0x6B175474E89094C44Da98b954EedeAC495271d0F";
+const WETH9 = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2";
+const USDC = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
 
-describe("swapExamples", function () {
-  it("swapExactInputSingle", async function () {
-    const accounts = await ethers.getSigners();
-    const weth = await ethers.getContractAt("IWETH",WETH9);
-    const usdc = await ethers.getContractAt("IERC20",USDC);
-    const SwapExamples = await ethers.getContractFactory("SwapExamples");
-    const swapExamples = await SwapExamples.deploy("0xE592427A0AEce92De3Edee1F18E0157C05861564");
-    await swapExamples.waitForDeployment();
+describe("SingleSwapToken",()=>{
+  let singleSwapToken;
+  let accounts;
+  let weth;
+  let dai;
+  let usdc;
 
-    const amountIn = BigInt("10000000000000000");
-    (await weth.connect(accounts[0])?.deposit({value:amountIn})).wait();
-    (await weth.connect(accounts[0]).approve(swapExamples.getAddress(),amountIn)).wait();
-
-    (await swapExamples.swapExactInputSingle(amountIn,WETH9,USDC)).wait();
-    
-    console.log("USDC balance : ",await usdc.balanceOf(accounts[0].address));
-    console.log(accounts[0].address);
+  before(async()=>{
+    accounts = await ethers.getSigners()
+    const SingleSwapToken = await ethers.getContractFactory("SingleSwapToken");
+    singleSwapToken = await SingleSwapToken.deploy();
+    const BooToken = await ethers.getContractFactory("BooToken");
+    const booToken = await BooToken.deploy();
+    await singleSwapToken.waitForDeployment();
+    weth = await ethers.getContractAt("IWETH",WETH9);
+    dai = await ethers.getContractAt("IERC20",DAI);
+    usdc = await ethers.getContractAt("IERC20",USDC);
   });
+
+  it("swapExactInputSingle",async()=>{
+    const amountIn = BigInt("1000000000000000000");
+    await weth.deposit({value:amountIn});
+    await weth.approve(singleSwapToken.getAddress(),amountIn);
+    await singleSwapToken.swapExactInputSingle(WETH9,DAI,amountIn);
+    console.log("Dai balance : ",await dai.balanceOf(accounts[0].address));
+  });
+
+  // it("swapExactInputMultihop",async()=>{
+  //   const wethAmountInMax = BigInt("1000000000000000000");
+  //   const daiAmountOut = BigInt("100000000000000000000");
+  //   await weth.deposit({value:wethAmountInMax});
+  //   await weth.approve(singleSwapToken.getAddress(),wethAmountInMax);
+
+  //   await singleSwapToken.swapExactOutputSingle(daiAmountOut,wethAmountInMax);
+  //   console.log("Dai balance", await dai.balanceOf(accounts[0].address));
+  // })
 });
+

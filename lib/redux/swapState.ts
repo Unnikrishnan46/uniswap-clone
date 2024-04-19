@@ -1,10 +1,11 @@
+import { contractAddress } from "@/context/contractAddress";
 import { createSlice,PayloadAction } from "@reduxjs/toolkit";
 
 
 const initialState:any = {
     payTokenData:[],
     recieveTokenData:[],
-    selectedPayTokenData:null,
+    selectedPayTokenData:contractAddress.mainnet[0],
     selectedRecieveTokenData:null
 }
 

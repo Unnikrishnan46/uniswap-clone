@@ -8,6 +8,7 @@ import type {
   FunctionFragment,
   Result,
   Interface,
+  EventFragment,
   AddressLike,
   ContractRunner,
   ContractMethod,
@@ -17,6 +18,7 @@ import type {
   TypedContractEvent,
   TypedDeferredTopicFilter,
   TypedEventLog,
+  TypedLogDescription,
   TypedListener,
   TypedContractMethod,
 } from "../../common";
@@ -24,6 +26,7 @@ import type {
 export interface IWETHInterface extends Interface {
   getFunction(
     nameOrSignature:
+      | "allowance"
       | "approve"
       | "balanceOf"
       | "deposit"
@@ -33,6 +36,12 @@ export interface IWETHInterface extends Interface {
       | "withdraw"
   ): FunctionFragment;
 
+  getEvent(nameOrSignatureOrTopic: "Approve" | "Transfer"): EventFragment;
+
+  encodeFunctionData(
+    functionFragment: "allowance",
+    values: [AddressLike, BigNumberish]
+  ): string;
   encodeFunctionData(
     functionFragment: "approve",
     values: [AddressLike, BigNumberish]
@@ -59,6 +68,7 @@ export interface IWETHInterface extends Interface {
     values: [BigNumberish]
   ): string;
 
+  decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
@@ -72,6 +82,42 @@ export interface IWETHInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
+}
+
+export namespace ApproveEvent {
+  export type InputTuple = [
+    arg0: AddressLike,
+    arg1: AddressLike,
+    arg2: BigNumberish
+  ];
+  export type OutputTuple = [arg0: string, arg1: string, arg2: bigint];
+  export interface OutputObject {
+    arg0: string;
+    arg1: string;
+    arg2: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace TransferEvent {
+  export type InputTuple = [
+    arg0: AddressLike,
+    arg1: AddressLike,
+    arg2: BigNumberish
+  ];
+  export type OutputTuple = [arg0: string, arg1: string, arg2: bigint];
+  export interface OutputObject {
+    arg0: string;
+    arg1: string;
+    arg2: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
 
 export interface IWETH extends BaseContract {
@@ -117,6 +163,12 @@ export interface IWETH extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
+  allowance: TypedContractMethod<
+    [arg0: AddressLike, arg1: BigNumberish],
+    [boolean],
+    "nonpayable"
+  >;
+
   approve: TypedContractMethod<
     [arg0: AddressLike, arg1: BigNumberish],
     [boolean],
@@ -147,6 +199,13 @@ export interface IWETH extends BaseContract {
     key: string | FunctionFragment
   ): T;
 
+  getFunction(
+    nameOrSignature: "allowance"
+  ): TypedContractMethod<
+    [arg0: AddressLike, arg1: BigNumberish],
+    [boolean],
+    "nonpayable"
+  >;
   getFunction(
     nameOrSignature: "approve"
   ): TypedContractMethod<
@@ -181,5 +240,42 @@ export interface IWETH extends BaseContract {
     nameOrSignature: "withdraw"
   ): TypedContractMethod<[arg0: BigNumberish], [void], "nonpayable">;
 
-  filters: {};
+  getEvent(
+    key: "Approve"
+  ): TypedContractEvent<
+    ApproveEvent.InputTuple,
+    ApproveEvent.OutputTuple,
+    ApproveEvent.OutputObject
+  >;
+  getEvent(
+    key: "Transfer"
+  ): TypedContractEvent<
+    TransferEvent.InputTuple,
+    TransferEvent.OutputTuple,
+    TransferEvent.OutputObject
+  >;
+
+  filters: {
+    "Approve(address,address,uint256)": TypedContractEvent<
+      ApproveEvent.InputTuple,
+      ApproveEvent.OutputTuple,
+      ApproveEvent.OutputObject
+    >;
+    Approve: TypedContractEvent<
+      ApproveEvent.InputTuple,
+      ApproveEvent.OutputTuple,
+      ApproveEvent.OutputObject
+    >;
+
+    "Transfer(address,address,uint256)": TypedContractEvent<
+      TransferEvent.InputTuple,
+      TransferEvent.OutputTuple,
+      TransferEvent.OutputObject
+    >;
+    Transfer: TypedContractEvent<
+      TransferEvent.InputTuple,
+      TransferEvent.OutputTuple,
+      TransferEvent.OutputObject
+    >;
+  };
 }

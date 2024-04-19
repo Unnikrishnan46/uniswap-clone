@@ -3,7 +3,9 @@ import { createSlice,PayloadAction } from "@reduxjs/toolkit";
 
 const initialState:any = {
     payTokenDialog:false,
-    recieveTokenDialog:false
+    recieveTokenDialog:false,
+    poolTokenDialogZeroOpen:false,
+    poolTokenDialogOneOpen:false
 }
 
 const  dialogState = createSlice({
@@ -16,10 +18,16 @@ const  dialogState = createSlice({
         setRecieveTokenDialog:(state,action:PayloadAction<any>)=>{
             state.recieveTokenDialog = action.payload;
         },
+        setPoolTokenDialogZeroOpen:(state,action:PayloadAction<any>)=>{
+            state.poolTokenDialogZeroOpen = action.payload;
+        },
+        setPoolTokenDialogOneOpen:(state,action:PayloadAction<any>)=>{
+            state.poolTokenDialogOneOpen = action.payload;
+        },
     }
 });
 
 
-export const {setPayTokenDialog,setRecieveTokenDialog} = dialogState.actions;
+export const {setPayTokenDialog,setRecieveTokenDialog,setPoolTokenDialogZeroOpen,setPoolTokenDialogOneOpen} = dialogState.actions;
 
 export default dialogState.reducer;

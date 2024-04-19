@@ -79,7 +79,7 @@ const Navbar = () => {
       if(data.network === "mainnet"){
         dispatch(setSelectedChain("Ethereum"));
         dispatch(setPayTokenData(contractAddress.mainnet));
-        dispatch(setSelectedPayTokenData(contractAddress.mainnet));
+        dispatch(setSelectedPayTokenData(contractAddress.mainnet[0]));
         dispatch(setRecieveTokenData(contractAddress.mainnet));
         // dispatch(setSelectedRecieveTokenData(contractAddress.mainnet))
       }
@@ -97,6 +97,13 @@ const Navbar = () => {
         dispatch(setSelectedPayTokenData(contractAddress.sepolia[0]));
         dispatch(setRecieveTokenData(contractAddress.sepolia));
         // dispatch(setSelectedRecieveTokenData(contractAddress.sepolia[0]));
+      }
+      if(data.network === "unknown"){
+        dispatch(setSelectedChain("Ethereum"));
+        dispatch(setPayTokenData(contractAddress.mainnet));
+        dispatch(setSelectedPayTokenData(contractAddress.mainnet[0]));
+        dispatch(setRecieveTokenData(contractAddress.mainnet));
+        // dispatch(setSelectedRecieveTokenData(contractAddress.mainnet))
       }
     } catch (error) {
       console.log(error);
